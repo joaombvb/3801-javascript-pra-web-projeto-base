@@ -1,6 +1,11 @@
+import { verificarListaComprados } from "./verificarListaComprados.js";
+import { listaDeCompras } from "./adicionarItem.js";
+import { excluirItem } from "./excluirItem.js";
+import { editarItem } from "./editarItem.js";
+import { adicionarData } from "./adicionarData.js";
+
 const listaComprados = document.getElementById("lista-comprados");
 let contador = 0;
-
 export function criarItemDaLista(item) {
     const itemDaLista = document.createElement("li");
     const containerItemLista = document.createElement("div");
@@ -19,75 +24,77 @@ export function criarItemDaLista(item) {
     const checkboxLabel = document.createElement("label");
     checkboxLabel.setAttribute("for", checkboxInput.id);
 
-    //Marca e desmarca item como comprado    
     checkboxLabel.addEventListener("click", function (evento) {
         const checkboxInput = evento.currentTarget.querySelector(".input-checkbox");
         const checkboxCustomizado = evento.currentTarget.querySelector(".checkbox-customizado");
-        const itemTitulo = evento.currentTarget.closest("li").querySelector("#item-titulo");
-
+        const itemTitulo = evento.currentTarget.closest("li").querySelector("#item-titulo")
         if (checkboxInput.checked) {
             checkboxCustomizado.classList.add("checked");
             itemTitulo.style.textDecoration = "line-through";
-            listaComprados.appendChild(itemDaLista);
+            listaComprados.appendChild(itemDaLista)
         } else {
             checkboxCustomizado.classList.remove("checked");
             itemTitulo.style.textDecoration = "none";
-            listaDeCompras.appendChild(itemDaLista);
+            listaDeCompras.appendChild(itemDaLista)
         }
+
+        verificarListaComprados(listaComprados)
     })
 
-    //Cria o elemnto "div" do Checkbox e adiciona sua classe
     const checkboxCustomizado = document.createElement("div");
     checkboxCustomizado.classList.add("checkbox-customizado");
 
-    //Adiciona o elemento "input" e o elemento "div" do checkbox como filhos do elemento "label"
     checkboxLabel.appendChild(checkboxInput);
     checkboxLabel.appendChild(checkboxCustomizado);
 
-    //Adiciona o elemento "label" como filho do elemento "div" que envolve os elementos do checkbox, e esse elemento "div" como filho do elemento "div" que envolve o nome do item
     containerCheckbox.appendChild(checkboxLabel);
-    containerNomeDoItem.appendChild(containerCheckbox);
+    containerNomeDoItem.appendChild(containerCheckbox)
 
-    //Cria o elemento "p" nome do item
     const nomeDoItem = document.createElement("p");
     nomeDoItem.id = "item-titulo";
     nomeDoItem.innerText = item;
-    containerNomeDoItem.appendChild(nomeDoItem);
+    containerNomeDoItem.appendChild(nomeDoItem)
 
-    //Cria o elemento "div" que envolve os botões, e o os elementos "button", de editar e remover o item, e adiciona a classe aos botões
     const containerBotoes = document.createElement("div");
+
     const botaoRemover = document.createElement("button");
     botaoRemover.classList.add("item-lista-button");
-    const botaoEditar = document.createElement("button");
-    botaoEditar.classList.add("item-lista-button");
-    
-    //Cria o ícone de deletar o item
+
     const imagemRemover = document.createElement("img");
-    imagemRemover.src ="img/delete.svg";
+    imagemRemover.src = "img/delete.svg";
     imagemRemover.alt = "Remover";
 
-    //Cria o ícone de editar o nome do item
+    botaoRemover.addEventListener("click", function () {
+        excluirItem(itemDaLista);
+    })
+
+    botaoRemover.appendChild(imagemRemover);
+    containerBotoes.appendChild(botaoRemover);
+
+    const botaoEditar = document.createElement("button");
+    botaoEditar.classList.add("item-lista-button")
+
     const imagemEditar = document.createElement("img");
     imagemEditar.src = "img/edit.svg";
     imagemEditar.alt = "Editar";
 
-    //Adiciona a o elemento "img" dos botões, como filho dos elementos "button", e o elemento "button", como filho do elemento "div" que envolve os botões
-    botaoRemover.appendChild(imagemRemover);
-    containerBotoes.appendChild(botaoRemover);
+    botaoEditar.addEventListener("click", function() {
+        editarItem(itemDaLista);
+        adicionarData(itemData);
+    })
+
     botaoEditar.appendChild(imagemEditar);
     containerBotoes.appendChild(botaoEditar);
 
     containerItemLista.appendChild(containerNomeDoItem);
     containerItemLista.appendChild(containerBotoes);
 
-    const itemData =  document.createElement("p");
-    itemData.innerText = `${new Date().toLocaleDateString("pt-br", { weekday: "long"})}  (${new Date().toLocaleDateString()}) às ${new Date().toLocaleTimeString("pt-br", {hour: "numeric", minute: "numeric"})}`;
+    const itemData = document.createElement("p");
+    adicionarData(itemData);
     itemData.classList.add("texto-data");
 
-    
     itemDaLista.appendChild(containerItemLista);
     itemDaLista.appendChild(itemData);
 
     return itemDaLista;
-
 }
